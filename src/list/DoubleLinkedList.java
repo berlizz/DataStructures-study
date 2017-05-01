@@ -1,17 +1,19 @@
-/*
- *	Linked list
- *	연결 기반의 리스트
- *	헤드쪽으로 데이터 추가
+/* 
+ * Double linked list
+ * 이중 연결 리스트
+ * 왼족 노드가 오른쪽 노드를 가리킴과 동시에 오른쪽 노드도 왼쪽 노그를 가리키는 구조
+ * 이중 연결 리스트는 양방향으로 조회가 가능
+ * 	
  */
 
 package list;
 
-public class LinkedList {
+public class DoubleLinkedList {
 
 	public static void main(String[] args) {
-		LinkedList.List list = new LinkedList.List();
+		DoubleLinkedList.List list = new DoubleLinkedList.List();
 		
-		System.out.println(list.isEmpty());
+System.out.println(list.isEmpty());
 		
 		list.add("a");
 		list.add("b");
@@ -21,9 +23,17 @@ public class LinkedList {
 		list.add("b");
 		
 		System.out.println("현재 노드 갯수 : " + list.size());
-		System.out.print(list.getFirst() + " ");
+		System.out.print(list.getFirstData() + " ");
 		while(true) {
-			Object data = list.getNext();
+			Object data = list.getNextData();
+			if(data == null) {
+				break;
+			}
+			System.out.print(data + " ");
+		}
+		System.out.println();
+		while(true) {
+			Object data = list.getPrevData();
 			if(data == null) {
 				break;
 			}
@@ -35,9 +45,9 @@ public class LinkedList {
 		list.remove("c");
 		
 		System.out.println("현재 노드 갯수 : " + list.size());
-		System.out.print(list.getFirst() + " ");
+		System.out.print(list.getFirstData() + " ");
 		while(true) {
-			Object data = list.getNext();
+			Object data = list.getNextData();
 			if(data == null) {
 				break;
 			}
@@ -48,71 +58,92 @@ public class LinkedList {
 		System.out.println("a 조회 : " + list.contains("a"));
 		System.out.println("c 조회 : " + list.contains("c"));
 		
+		
+		list.remove("a");
+		list.remove("b");
+		list.remove("b");
+		list.remove("d");
+		System.out.println("현재 노드 갯수 : " + list.size());
 	}
-	
 	
 	static class List {
 		private Node head = null;
 		private Node position = null;
-		private Node before = null;
 		private int size;
 		
 		List() {
 			head = new Node("dummy");
 			head.setNext(null);
-			position = head;
+			head.setPrev(null);
 			size = 0;
 		}
 		
 		public boolean isEmpty() {
-			if(head.getNext() == null) {
-				return true;
-			}
-			
-			return false;
+			return head.getNext() == null;
 		}
 		
 		// 노드 추가
-		public boolean add(Object object) {
-			Node newNode = new Node(object);
+		public void add(Object data) {
+			Node newNode = new Node(data);
 			newNode.setNext(head.getNext());
-			head.setNext(newNode);
-			size++;
+			newNode.setPrev(null);
 			
-			return true;
+			if(head.getNext() != null) {
+				head.getNext().setPrev(newNode);
+			}
+			head.setNext(newNode);
+			
+			size++;
 		}
 		
-		// 첫번째 노드 가져오기
-		public Object getFirst() {
-			before = head;
+		// 첫번쨰 노드 가져오기
+		public Object getFirstData() {
+			if(head.getNext() == null) {
+				return null;
+			}
+			
 			position = head.getNext();
 			
 			return position.getData();
+			
 		}
 		
 		// 다음 노드 가져오기
-		public Object getNext() {
+		public Object getNextData() {
 			if(position.getNext() == null) {
 				return null;
 			}
 			
-			before = position;
 			position = position.getNext();
+			
+			return position.getData();
+		}
+		
+		// 이전 노드 가져오기
+		public Object getPrevData() {
+			if(position.getPrev() == null) {
+				return null;
+			}
+			
+			position = position.getPrev();
 			
 			return position.getData();
 		}
 		
 		// 노드 조회
 		public boolean contains(Object object) {
-			if(object.equals(getFirst())) {
+			Object data = getFirstData();
+			if(data != null && data.equals(object)) {
 				return true;
 			}
 			
 			while(true) {
-				Object data = getNext();
+				data = getNextData();
+				
 				if(data == null) {
 					break;
 				}
+				
 				if(data.equals(object)) {
 					return true;
 				}
@@ -123,23 +154,32 @@ public class LinkedList {
 		
 		// 노드 삭제
 		public Object remove(Object object) {
-			Object data = getFirst();
+			Object data = getFirstData();
+			
 			if(object.equals(data)) {
-				before.setNext(position.getNext());
-				position = before;
+				head.setNext(position.getNext());
 				size--;
 				
 				return data;
 			}
 			
 			while(true) {
-				data = getNext();
+				data = getNextData();
+				
 				if(data == null) {
 					break;
 				}
+				
 				if(object.equals(data)) {
-					before.setNext(position.getNext());
-					position = before;
+					
+					// 제일 마지막 노드가 삭제 대상일 경우
+					if(position.getNext() == null) {
+						position.getPrev().setNext(null);
+					} else {
+						position.getPrev().setNext(position.getNext());
+						position.getNext().setPrev(position.getPrev());
+					}
+					position = position.getPrev();
 					size--;
 					
 					return data;
@@ -153,15 +193,18 @@ public class LinkedList {
 			return size;
 		}
 		
+		
 	}
 	
 	static class Node {
 		private Object data;
 		private Node next;
+		private Node prev;
 		
-		Node(Object data) {
+		public Node(Object data) {
 			this.data = data;
 			next = null;
+			prev = null;
 		}
 
 		public Object getData() {
@@ -179,5 +222,15 @@ public class LinkedList {
 		public void setNext(Node next) {
 			this.next = next;
 		}
+
+		public Node getPrev() {
+			return prev;
+		}
+
+		public void setPrev(Node prev) {
+			this.prev = prev;
+		}
+		
 	}
+
 }
