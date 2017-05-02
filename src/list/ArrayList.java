@@ -7,10 +7,10 @@ package list;
 
 public class ArrayList {
 
-	public static final int SIZE = 100;
+	public static final int ARRAY_LENGTH = 100;
 	
 	public static void main(String[] args) {
-		ArrayList.List list = new ArrayList.List(SIZE);
+		ArrayList.List list = new ArrayList.List();
 		
 		System.out.println(list.isEmpty());
 		
@@ -46,8 +46,8 @@ public class ArrayList {
 		private Object[] elements;
 		private int position;
 		
-		List(int size) {
-			elements = new Object[size];
+		List() {
+			elements = new Object[ARRAY_LENGTH];
 			position = -1;
 		}
 		
@@ -61,13 +61,11 @@ public class ArrayList {
 		
 		// 데이터 추가
 		public boolean add(Object element) {
-			position++;
-			
-			if((position + 1) > SIZE) {
-				position--;
+			if(position == (ARRAY_LENGTH - 1)) {
 				return false;
 			}
 			
+			position++;
 			elements[position] = element;
 			return true;
 		}
