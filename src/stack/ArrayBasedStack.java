@@ -49,7 +49,7 @@ public class ArrayBasedStack {
 		}
 		
 		public boolean push(Object object) {
-			if(topIndex == (ARRAY_LENGTH - 1)) {
+			if(topIndex == (ARRAY_LENGTH - 1) || object == null) {
 				return false;
 			}
 			
