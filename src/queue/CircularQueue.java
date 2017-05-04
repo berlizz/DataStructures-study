@@ -43,7 +43,6 @@ public class CircularQueue {
 		private Object[] queue;
 		private int front;
 		private int rear;
-		private int size;
 		
 		Queue() {
 			queue = new Object[ARRAY_LENGTH];
