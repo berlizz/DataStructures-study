@@ -19,11 +19,11 @@ public class BinaryTree {
 		BinaryTree.Node n4 = tree.makeNode(4);
 		BinaryTree.Node n5 = tree.makeNode(5);
 
-		tree.makeLeftSubTree(n1, n2);			//		1
-		tree.makeRightSubTree(n1, n3);			//	   / \
-		tree.makeLeftSubTree(n2, n4);			//	  2   3
-		tree.makeRightSubTree(n2, n5);			//   / \
-												//  4   5
+		tree.makeLeftSubTree(n1, n2);           //      1
+		tree.makeRightSubTree(n1, n3);          //     / \
+		tree.makeLeftSubTree(n2, n4);           //    2   3
+		tree.makeRightSubTree(n2, n5);          //   / \
+		                                        //  4   5
 		
 		System.out.println(tree.getNodeData(tree.getLeftSubTree(n1)));
 		System.out.println(tree.getNodeData(tree.getLeftSubTree(tree.getLeftSubTree(n1))));
