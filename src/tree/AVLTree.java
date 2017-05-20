@@ -1,54 +1,57 @@
 /* 
- * Binary search Tree
- * 이진 탐색 트리
- * 이진 탐색 트리의 노드에 저장된 키(데이터)는 유일
- * 루트 노드의 키가 왼쪽 서브 트리를 구성하는 어떠한 노드의 키보다 큼
- * 루트 노드의 키가 오른쪽 서브 트리를 구성하는 어떠한 노드의 키보다 작음
- * 왼쪽과 오른쪽 서브 트리도 이진 탐색 트리
- * 데이터를 삽입 할 경우 작으면 왼쪽으로 크면 오른쪽으로의 원칙을 기준으로 데이터를 삽입
- * 탐색의 과정에서도 그대로 따름
- * Tree클래스는 tree.BinaryTree의 Tree클래스에서 removeLeftSubTree, removeRightSubTree메소드 추가 
+ * AVL tree
+ * 이진 탐색 트리의 탐색 연산은 O(log2n)의 시간복잡도를 가지지만, 균형이 맞지 않을 수록 O(n)에 가까운 시간 복잡도를 보임
+ * AVL 트리는 이러한 이진 탐색 트리의 단점을 보완한 균형 잡힌 이진 트리 중 하나
+ * 노드가 추가될 때 또는 노드가 삭제될 때 트리의 균형 상태를 파악한 후 구조를 변경하여 균형을 잡음
+ * 균형 인수 = 왼쪽 서브 트리 높이 - 오른쪽 서브 트리 높이
+ * 균형 인수의 절대값이 2 이상인 경우에 트리 재조정 진행
+ * 구현은 이진 탐색 트리를 기반으로 하여 트리의 높이를 구하는 메소드, 각각의 회전에 대한 메소드, 재조정 메소드 추가
+ * 노드의 삽입과 삭제 메소드 수정
  * 
  */
 
 package tree;
 
-public class BinarySearchTree {
+public class AVLTree {
 
 	public static void main(String[] args) {
-		BSTree tree = new BSTree();
-		tree.insert(5);  //                     5
-		tree.insert(8);  //                   /   \
-		tree.insert(1);  //                  1     8
-		tree.insert(6);  //                   \   / \
-		tree.insert(4);  //                    4 6   9
-		tree.insert(9);  //                   /   \   
-		tree.insert(3);  //                  3     7    
-		tree.insert(2);  //                 /
-		tree.insert(7);  //                2
+		AVLT avlt = new AVLT();
 		
-		tree.showAllData();
+		avlt.insert(1);
+		avlt.insert(2);
+		avlt.insert(3);
+		avlt.insert(4);
+		avlt.insert(5);
+		avlt.insert(6);
+		avlt.insert(7);
+		avlt.insert(8);
+		avlt.insert(9);
+		avlt.insert(0);
+		
+		avlt.showAllData();
 		System.out.println();
 		
-		tree.remove(3);
-		tree.showAllData();
+		System.out.println("루트 노드 : " + avlt.root.getData());
+		
+		avlt.remove(5);
+		avlt.showAllData();
 		System.out.println();
 		
-		tree.remove(1);
-		tree.showAllData();
+		System.out.println("루트 노드 : " + avlt.root.getData());
+		
+		avlt.remove(4);
+		avlt.showAllData();
 		System.out.println();
 		
-		tree.remove(6);
-		tree.showAllData();
-		System.out.println();
+		System.out.println("루트 노드 : " + avlt.root.getData());
 		
 	}
 	
-	static class BSTree {
+	static class AVLT {
 		private Tree tree;
 		private Node root;
 		
-		BSTree() {
+		AVLT() {
 			tree = new Tree();
 			root = null;
 		}
@@ -92,6 +95,8 @@ public class BinarySearchTree {
 				root = newNode;
 			}
 			
+			// 노드 추가 후 리밸런싱
+			root = rebalance(root);
 		}
 		
 		// 데이터 탐색
@@ -198,6 +203,8 @@ public class BinarySearchTree {
 				root = tree.getRightSubTree(vRoot);
 			}
 			
+			// 노드 제거 후 리벨런싱
+			root = rebalance(root);
 			// 삭제한 노드 리턴
 			return removeNode;
 		}
@@ -205,6 +212,109 @@ public class BinarySearchTree {
 		// 모든 데이터 중윈 순회방식으로 콘솔창에 출력
 		public void showAllData() {
 			tree.inorderTraversal(root);
+		}
+		
+		// 트리의 높이를 계산하여 반환(트리의 모든 경로 중에서 가장 깊이 뻗은 경로의 높이 반환)
+		public int getHeight(Node node) {
+			int leftHeight;
+			int rightHeight;
+			
+			if(node == null) {
+				return 0;
+			}
+			
+			leftHeight = getHeight(tree.getLeftSubTree(node));
+			rightHeight = getHeight(tree.getRightSubTree(node));
+			
+			if(leftHeight > rightHeight) {
+				return leftHeight + 1;
+			} else {
+				return rightHeight + 1;
+			}
+			
+		}
+		
+		// 두 서브 트리의 높이의 차(균형 인수)를 반환
+		public int getHeightDiff(Node node) {
+			int leftHeight;
+			int rightHeight;
+			
+			if(node == null) {
+				return 0;
+			}
+			
+			leftHeight = getHeight(tree.getLeftSubTree(node));
+			rightHeight = getHeight(tree.getRightSubTree(node));
+			
+			return leftHeight - rightHeight;
+		}
+		
+		// LL 회전
+		public Node rotationLL(Node node) {
+			Node parent = node;
+			Node child = tree.getLeftSubTree(parent);
+			
+			// LL회전의 경우 부모 노드의 왼쪽으로 자식노드의 오른쪽 노드를 연결하고, 자식노드의 오른쪽에 부모노드를 연결, 결론은 자식노드가 루트노드가 됨
+			tree.makeLeftSubTree(parent, tree.getRightSubTree(child));
+			tree.makeRightSubTree(child, parent);
+			
+			return child;  // 변경된 루트노드를 리턴
+		}
+		
+		// RR 회전
+		public Node rotationRR(Node node) {
+			Node parent = node;
+			Node child = tree.getRightSubTree(node);
+			
+			// RR회전의 경우 부모 노드의 오른쪽으로 자식노드의 왼쪽 노드를 연결하고, 자식노드의 왼쪽에 부모노드를 연결, 결론은 자식노드가 루트노드가 됨
+			tree.makeRightSubTree(parent, tree.getLeftSubTree(child));
+			tree.makeLeftSubTree(child, parent);
+			
+			return child;  // 변경된 루트노드를 리턴
+		}
+		
+		// LR 회전 - 부분적 RR회전에 이어서 LL회전을 진행
+		public Node rotationLR(Node node) {
+			Node parent = node;
+			Node child = tree.getLeftSubTree(parent);
+			
+			tree.makeLeftSubTree(parent, rotationRR(child));  // 부분적 RR회전
+			
+			return rotationLL(parent);      // LL회전 후 변경된 루트노드 리턴
+		}
+		
+		// RL 회전 - 부분적 LL회전에 이어서 RR회저을 진행
+		public Node rotationRL(Node node) {
+			Node parent = node;
+			Node child = tree.getRightSubTree(node);
+			
+			tree.makeRightSubTree(parent, rotationLL(child));  // 부분적 LL회전
+			
+			return rotationRR(parent);      // RR회전 후 변경된 루트노드 리턴
+		}
+		
+		public Node rebalance(Node node) {
+			int heightDiff = getHeightDiff(node);
+			
+			// 균형 인수가 +2 이상이면 LL 또는 LR 상태이다.
+			if(heightDiff > 1) {
+				if(getHeightDiff(tree.getLeftSubTree(node)) > 0) {
+					node = rotationLL(node);    // LL 상태인 경우
+				} else {
+					node = rotationLR(node);    // LR 상태인 경우
+				}
+			}
+			
+			// 균형 인수가 -2 이하이면 RR 또른 RL 상태이다.
+			if(heightDiff < -1) {
+				if(getHeightDiff(tree.getRightSubTree(node)) < 0) {
+					node = rotationRR(node);    // RR 상태인 경우
+				} else {
+					node = rotationRL(node);    // RL 상태인 경우
+				}
+			}
+			
+			return node;    // 변경된 루트노드를 리턴
 		}
 		
 	}
