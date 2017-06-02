@@ -19,18 +19,20 @@ public class ChainedTable {
 		table.insert(1, "value1");
 		table.insert(2, "value2");
 		table.insert(3, "value3");
-		table.insert(1, "value4");
-		table.insert(1, "value5");
+		table.insert(101, "value4");
+		table.insert(201, "value5");
 		
 		System.out.println(table.search(1));
 		System.out.println(table.search(2));
 		System.out.println(table.search(3));
+		System.out.println(table.search(101));
+		System.out.println(table.search(201));
 		
 		table.delete(1);
 		System.out.println(table.search(1));
 		
-		table.delete(1);
-		System.out.println(table.search(1));
+		table.delete(101);
+		System.out.println(table.search(101));
 
 	}
 	
