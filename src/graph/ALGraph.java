@@ -25,12 +25,10 @@ public class ALGraph {
 	
 	static class Graph {
 		private int numOfVertex;
-		private int numOfEdge;
 		private List []list;
 		
 		Graph(int numOfVertex) {
 			this.numOfVertex = numOfVertex;
-			this.numOfEdge = 0;
 			this.list = new List[numOfVertex];
 			
 			for(int i=0; i<list.length; i++) {
@@ -42,7 +40,6 @@ public class ALGraph {
 		public void addEdge(Vertex fromVertex, Vertex toVertex) {
 			list[fromVertex.ordinal()].add(toVertex);
 			list[toVertex.ordinal()].add(fromVertex);
-			numOfEdge++;
 		}
 		
 		// 그래프에서 정점의 연결 상황 출력 
