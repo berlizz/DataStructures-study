@@ -5,114 +5,64 @@
 
 package list;
 
-public class ArrayList {
-
-	public static final int ARRAY_LENGTH = 100;
+public class ArrayList<E> {
 	
-	public static void main(String[] args) {
-		ArrayList.List list = new ArrayList.List();
-		
-		System.out.println(list.isEmpty());
-		
-		list.add("a");
-		list.add("b");
-		list.add("c");
-		list.add("d");
-		list.add("a");
-		list.add("b");
-		System.out.println("현재 데이터 수 : " + list.count());
-		for(int i=0; i<list.count(); i++) {
-			System.out.print(list.get(i) + " ");
-		}
-		System.out.println();
-		
-		System.out.println(list.indexOf("a"));
-		System.out.println(list.indexOf("b"));
-		System.out.println(list.indexOf("c"));
-		
-		System.out.println("삭제된 데이터 : " + list.remove(0));
-		System.out.println("현재 데이터 수 : " + list.count());
-		for(int i=0; i<list.count(); i++) {
-			System.out.print(list.get(i) + " ");
-		}
-		System.out.println();
-		
-		System.out.println(list.indexOf("a"));
-		
-		
+	private static final int ARRAY_SIZE = 100;
+
+	private E[] elements;
+	private int position;
+	
+	public ArrayList() {
+		elements = (E[]) new Object[ARRAY_SIZE];
+		this.position = -1;
 	}
 	
-	static class List {
-		private Object[] elements;
-		private int position;
-		
-		List() {
-			elements = new Object[ARRAY_LENGTH];
-			position = -1;
+	public boolean isEmpty() {
+		return position == -1;
+	}
+	
+	// 데이터 추가
+	public void add(E data) throws Exception {
+		if(position == (ARRAY_SIZE -1)) {
+			throw new Exception("array full");
 		}
 		
-		public boolean isEmpty() {
-			if(position == -1) {
-				return true;
+		position++;
+		elements[position] = data;
+	}
+	
+	// 데이터 가져오기
+	public E get(int index) {
+		return elements[index];
+	}
+	
+	// 데이터 삭제
+	public E remove(int index) {
+		E returnValue = elements[index];
+		
+		for(int i=index + 1; i<elements.length; i++) {
+			elements[i - 1] = elements[i];
+		}
+		
+		elements[position] = null;
+		position--;
+		
+		return returnValue;
+	}
+	
+	// 데이터 조회
+	public int indexOf(E data) {
+		for(int i=0; i<position + 1; i++) {
+			if(elements[i].equals(data)) {
+				return i;
 			}
-			
-			return false;
 		}
 		
-		// 데이터 추가
-		public boolean add(Object element) {
-			if(position == (ARRAY_LENGTH - 1)) {
-				return false;
-			}
-			
-			position++;
-			elements[position] = element;
-			return true;
-		}
-		
-		// 데이터 가져오기
-		public Object get(int index) {
-			return elements[index];
-		}
-		
-		// 데이터 삭제
-		public Object remove(int index) {
-			Object returnValue = elements[index];
-			
-			for(int i=index + 1; i<=elements.length - 1; i++) {
-				elements[i-1] = elements[i];
-			}
-			
-			elements[position] = null;
-			position--;
-			
-			return returnValue;
-		}
-		
-		// 데이터 탐색
-		public int indexOf(Object data) {
-			if(data == null) {
-				for(int i=0; i<count(); i++) {
-					if(elements[i] == null) {
-						return i;
-					}
-				}
-			} else {
-				for(int i=0; i<count(); i++) {
-					if(data.equals(elements[i])) {
-						return i;
-					}
-				}
-			}
-			
-			
-			return -1;
-		}
-		
-		// 데이터 갯수
-		public int count() {
-			return position + 1;
-		}
-		
+		return -1;  // 데이터 조회 실패
+	}
+	
+	// 데이터 갯수
+	public int count() {
+		return position + 1;
 	}
 }
