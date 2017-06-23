@@ -136,7 +136,7 @@ public class CircularLinkedList<E> implements LinkedList<E> {
 	public E remove(E data) {
 		E check = getFirstData();
 		if(check != null && check.equals(data)) {
-			// 삭제할 노드가 리트에 하나 남은 데이터인 경우
+			// 삭제할 노드가 리스트에 하나 남은 데이터인 경우
 			if(size == 1) {
 				tail = null;
 				position = null;

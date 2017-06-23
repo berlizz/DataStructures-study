@@ -8,95 +8,75 @@
 
 package stack;
 
-public class LinkedListBasedStack {
+import list.SimpleLinkedList;
 
-	public static void main(String[] args) {
-		LinkedListBasedStack.Stack stack = new LinkedListBasedStack.Stack();
+public class LinkedListBasedStack<E> implements Stack<E> {
+	
+	//private Node<E> head;
+	private SimpleLinkedList<E> list;
+	
+	public LinkedListBasedStack() {
+		//head = new Node<>();
+		list = new SimpleLinkedList<>();
 		
-		System.out.println("isEmpty : " + stack.isEmpty());
-		stack.push("¤¡");
-		stack.push("¤¤");
-		stack.push("¤§");
-		stack.push("¤©");
-		
-		System.out.println("peek : " + stack.peek());
-		
-		while(true) {
-			Object data = stack.pop();
-			if(data == null) {
-				break;
-			}
-			System.out.print(data + " ");
-		}
-		
-		System.out.println();
-		
-		System.out.println("isEmpty : " + stack.isEmpty());
-		System.out.println("peek : " + stack.peek());
+	}
+	/*
+	@Override
+	public boolean isEmpty() {
+		return head.getNext() == null;
 	}
 	
-	static class Stack {
-		private Node head;
+	@Override
+	public E push(E data) {
+		Node<E> newNode = new Node<>(data);
+		newNode.setNext(head.getNext());
+		head.setNext(newNode);
 		
-		Stack() {
-			head = new Node("dummy");
-		}
-		
-		public boolean isEmpty() {
-			return head.getNext() == null;
-		}
-		
-		public void push(Object object) {
-			Node newNode = new Node(object);
-			newNode.setNext(head.getNext());
-			head.setNext(newNode);
-		}
-		
-		public Object pop() {
-			if(isEmpty()) {
-				return null;
-			}
-			
-			Object data = head.getNext().getData();
-			head.setNext(head.getNext().getNext());
-			
-			return data;
-		}
-		
-		public Object peek() {
-			if(isEmpty()) {
-				return null;
-			}
-			
-			return head.getNext().getData();
-		}
+		return data;
 	}
 	
-	static class Node {
-		private Object data;
-		private Node next;
-		
-		public Node(Object data) {
-			this.data = data;
-			next = null;
-		}
-
-		public Object getData() {
-			return data;
-		}
-
-		public void setData(Object data) {
-			this.data = data;
-		}
-
-		public Node getNext() {
-			return next;
-		}
-
-		public void setNext(Node next) {
-			this.next = next;
+	@Override
+	public E pop() {
+		if(isEmpty()) {
+			return null;
 		}
 		
+		E data = head.getNext().getData();
+		head.setNext(head.getNext().getNext());
+		
+		return data;
 	}
-
+	
+	@Override
+	public E peek() {
+		return (isEmpty())? null : head.getNext().getData();
+	}
+	*/
+	
+	@Override
+	public boolean isEmpty() {
+		return list.isEmpty();
+	}
+	
+	@Override
+	public E push(E data) {
+		list.add(data);
+		return data;
+	}
+	
+	@Override
+	public E pop() {
+		if(isEmpty()) {
+			return null;
+		}
+		
+		E data = list.getFirstData();
+		list.remove(data);
+		return data;
+	}
+	
+	@Override
+	public E peek() {
+		return list.getFirstData();
+	}
 }

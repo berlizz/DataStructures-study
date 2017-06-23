@@ -5,10 +5,10 @@ public class Node<E> {
 	public E data;
 	public Node<E> next;
 	
-	Node() {
+	public Node() {
 	}
 	
-	Node(E data) {
+	public Node(E data) {
 		this.data = data;
 		this.next = null;
 	}

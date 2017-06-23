@@ -6,76 +6,50 @@
 
 package stack;
 
-public class ArrayBasedStack {
+public class ArrayBasedStack<E> implements Stack<E> {
 	
 	private static final int ARRAY_LENGTH = 100;
-
-	public static void main(String[] args) {
-		ArrayBasedStack.Stack stack = new ArrayBasedStack.Stack();
-		
-		System.out.println("isEmpty : " + stack.isEmpty());
-		stack.push("1");
-		stack.push("2");
-		stack.push("3");
-		stack.push("4");
-		
-		System.out.println("peek : " + stack.peek());
-		
-		while(true) {
-			Object data = stack.pop();
-			if(data == null) {
-				break;
-			}
-			System.out.print(data + " ");
-		}
-		
-		System.out.println();
-		
-		System.out.println("isEmpty : " + stack.isEmpty());
-		System.out.println("peek : " + stack.peek());
+	private E[] elements;
+	private int topIndex;
+	
+	public ArrayBasedStack() {
+		this.elements = (E[]) new Object[ARRAY_LENGTH];
+		this.topIndex = -1;
 	}
 	
-	static class Stack {
-		private Object[] elements;
-		private int topIndex;
-		
-		Stack() {
-			elements = new Object[ARRAY_LENGTH];
-			topIndex = -1;
-		}
-		
-		public boolean isEmpty() {
-			return topIndex == -1;
-		}
-		
-		public boolean push(Object object) {
-			if(topIndex == (ARRAY_LENGTH - 1) || object == null) {
-				return false;
-			}
-			
-			topIndex++;
-			elements[topIndex] = object;
-			
-			return true;
-		}
-		
-		public Object pop() {
-			if(isEmpty()) {
-				return null;
-			}
-			
-			Object data = elements[topIndex];
-			topIndex--;
-			
-			return data;
-		}
-		
-		public Object peek() {
-			if(isEmpty()) {
-				return null;
-			}
-			
-			return elements[topIndex];
-		}
+	@Override
+	public boolean isEmpty() {
+		return topIndex == -1;
 	}
+	
+	@Override
+	public E push(E data) {
+		if(topIndex >= ARRAY_LENGTH -1) {
+			return null;
+		}
+		
+		topIndex++;
+		elements[topIndex] = data;
+		
+		return data;
+	}
+	
+	@Override
+	public E pop() {
+		if(isEmpty()) {
+			return null;
+		}
+		
+		E data = elements[topIndex];
+		topIndex--;
+		
+		return data;
+	}
+	
+	@Override
+	public E peek() {
+		return (isEmpty())? null : elements[topIndex];
+	}
+
+	
 }
